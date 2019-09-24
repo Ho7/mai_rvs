@@ -5,7 +5,7 @@
   "properties": {
     "number": {
       "type": "integer",
-      "min": 0
+      "minimum": 0
     }
   },
   "required": ["number"]
