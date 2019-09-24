@@ -4,7 +4,8 @@
   "description": "Increment request",
   "properties": {
     "number": {
-      "type": "integer"
+      "type": "integer",
+      "min": 0
     }
   },
   "required": ["number"]
