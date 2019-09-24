@@ -1,34 +1,35 @@
+import json
+
 import flask
 from werkzeug.exceptions import BadRequest
 from consts import HTTP_CODE_BAD_REQUEST
 from jsonschema import validate, ValidationError
-from service_layler import check_number
+from service_layler import processing
 
-app = flask.Flask(__name__)
+blueprint = flask.Blueprint('api', __name__)
 
 
-@app.route('/increment', methods=['POST'])
+@blueprint.route('/increment', methods=['POST'])
 def increment():
     try:
         request = flask.request.get_json()
     except BadRequest as e:
-        app.logger.warn(str(e))
-        return flask.abort(HTTP_CODE_BAD_REQUEST)
+        flask.current_app.logger.warn(str(e))
+        return flask.jsonify({'error': str(e)}), HTTP_CODE_BAD_REQUEST
 
-    try:
-        validate(request, './jsonscheme/increment/request.json')
-    except ValidationError as e:
-        app.logger.warn(str(e))
-        return flask.abort(HTTP_CODE_BAD_REQUEST, e)
+    with open('/app/jsoncheme/increment/request.json', 'r') as schema:
+        try:
+            validate(request, json.load(schema))
+        except ValidationError as e:
+            flask.current_app.logger.warn(str(e))
+            return flask.jsonify({'error': str(e)}), HTTP_CODE_BAD_REQUEST
 
     number = request.get('number')
 
     try:
-        check_number(number, app.redis)
+        result = processing(flask.current_app.redis, number)
     except Exception as e:
-        app.logger.warn(str(e))
-        return flask.abort(HTTP_CODE_BAD_REQUEST, e)
+        flask.current_app.logger.warn(str(e))
+        return flask.jsonify({'error': str(e)}, HTTP_CODE_BAD_REQUEST)
 
-    app.redis.set(number, True)
-
-    return flask.jsonify({'result': number+1}, success=True)
+    return flask.jsonify({'result': result})

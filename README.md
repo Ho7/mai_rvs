@@ -1,1 +1,1 @@
-# mai_rvs
+# docker-compose up --build
