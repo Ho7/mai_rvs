@@ -2,11 +2,11 @@ import redis
 
 
 class AlreadyExistException(Exception):
-    pass
+    code = 1
 
 
 class OneLessThatItWasException(Exception):
-    pass
+    code = 2
 
 
 def processing(db: redis.Redis, number: int) -> int:
