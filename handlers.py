@@ -35,3 +35,8 @@ def increment():
         return flask.jsonify({'error': str(e), 'type': e.code}), HTTP_CODE_BAD_REQUEST
 
     return flask.jsonify({'result': result})
+
+
+@blueprint.route('/_info', methods=['GET'])
+def info():
+    return flask.jsonify({'result': 'ok'})
