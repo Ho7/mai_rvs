@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  generation: 3
+  name: nyuokunev
+  namespace: ns-10
+spec:
+  rules:
+    - host: node-10.mai.ru
+      http:
+        paths:
+          - backend:
+              serviceName: s-10
+              servicePort: 8090
+            path: /
+status:
+  loadBalancer:
+    ingress:
+      - {}

@@ -10,11 +10,12 @@ class OneLessThatItWasException(Exception):
 
 
 def processing(db: redis.Redis, number: int) -> int:
-    if db.get(number):
+    pipeline = db.pipeline(transaction=True)
+    if pipeline.get(number):
         raise AlreadyExistException('Number already exists')
-    elif db.get(number + 1):
+    elif pipeline.get(number + 1):
         raise OneLessThatItWasException('Number is 1 less than required')
 
-    db.set(number, 'True')
+    pipeline.set(number, 'True')
 
     return number + 1
